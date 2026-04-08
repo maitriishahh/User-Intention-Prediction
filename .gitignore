@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual env
+venv/
+env/
+.venv/
+
+# Logs
+logs/
+
+# Artifacts
+artifacts/
+
+# Models
+models/
+
+# Data
+data/
+
+# Notebook checkpoints
+.ipynb_checkpoints
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
