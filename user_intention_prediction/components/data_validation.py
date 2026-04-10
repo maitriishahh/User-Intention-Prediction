@@ -28,7 +28,9 @@ class DataValidation:
             df = pd.read_csv(data_file_path)
 
             logging.info(f"Dataset shape before cleaning: {df.shape}")
-
+            #Remove blank rows
+            df = df.dropna()
+            
             # Missing values
             missing_values = df.isnull().sum()
             logging.info(f"Missing values:\n{missing_values}")
