@@ -1,9 +1,9 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import requests
 
-from user_intention_prediction.pipeline.prediction_pipeline import PredictionPipeline
-
+API_URL = "http://127.0.0.1:8000/predict"
 
 # Page Config
 st.set_page_config(
@@ -20,9 +20,6 @@ Adjust the sliders to simulate user browsing behavior.
 The model predicts whether the user is likely to make a purchase.
 """
 )
-
-# Initialize Pipeline
-pipeline = PredictionPipeline()
 
 st.subheader("User Browsing Behavior")
 
@@ -103,21 +100,10 @@ if st.button("Try Example"):
 # Predict Button
 if st.button("Predict Purchase"):
 
-    # Auto-generate duration features
-    administrative_duration = administrative * 60
-    informational_duration = informational * 80
-    product_related_duration = product_related * 120
-
     user_input = {
         "Administrative": administrative,
-        "Administrative_Duration": administrative_duration,
-
         "Informational": informational,
-        "Informational_Duration": informational_duration,
-
         "ProductRelated": product_related,
-        "ProductRelated_Duration": product_related_duration,
-
         "BounceRates": bounce_rate,
         "ExitRates": exit_rate,
         "PageValues": page_values,
@@ -126,17 +112,25 @@ if st.button("Predict Purchase"):
         "Weekend": weekend
     }
 
-    model = pipeline.load_model()
+    try:
+        response = requests.post(API_URL, json=user_input)
+        response.raise_for_status()
 
-    prediction, probabilities = pipeline.predict(model, user_input)
+        result = response.json()
 
-    st.subheader("Prediction Result")
+        prediction = result["prediction"]
+        probability = result["probability"]
 
-    if prediction[0] == 1:
-        result = "Purchase"
-    else:
-        result = "Non-Purchase"
+        st.subheader("Prediction Result")
 
-    st.divider()
-    st.markdown(f"**Prediction:** {result}")
-    st.markdown(f"**Purchase Probability:** {probabilities[0]*100:.2f}%")
+        if prediction == 1:
+            result_text = "Purchase"
+        else:
+            result_text = "Non-Purchase"
+
+        st.divider()
+        st.markdown(f"**Prediction:** {result_text}")
+        st.markdown(f"**Purchase Probability:** {probability*100:.2f}%")
+
+    except Exception as e:
+        st.error("FastAPI server not running. Please start API first.")

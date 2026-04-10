@@ -110,7 +110,7 @@ class PredictionPipeline:
             # Predict probabilities
             probabilities = model.predict_proba(data)[:, 1]
 
-            threshold = 0.22
+            threshold = 0.35
             logging.info(f"Using Threshold: {threshold}")
 
             prediction = (probabilities >= threshold).astype(int)
