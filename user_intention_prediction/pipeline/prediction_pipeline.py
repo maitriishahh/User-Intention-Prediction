@@ -76,6 +76,9 @@ class PredictionPipeline:
         user_df = pd.get_dummies(user_df)
 
         user_df = user_df.reindex(columns=feature_columns, fill_value=0)
+        user_df = user_df.astype(float)
+        
+        logging.info(f"Prepared input:\n{user_df}")
 
         return user_df
 

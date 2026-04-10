@@ -103,10 +103,21 @@ if st.button("Try Example"):
 # Predict Button
 if st.button("Predict Purchase"):
 
+    # Auto-generate duration features
+    administrative_duration = administrative * 60
+    informational_duration = informational * 80
+    product_related_duration = product_related * 120
+
     user_input = {
         "Administrative": administrative,
+        "Administrative_Duration": administrative_duration,
+
         "Informational": informational,
+        "Informational_Duration": informational_duration,
+
         "ProductRelated": product_related,
+        "ProductRelated_Duration": product_related_duration,
+
         "BounceRates": bounce_rate,
         "ExitRates": exit_rate,
         "PageValues": page_values,
@@ -125,7 +136,7 @@ if st.button("Predict Purchase"):
         result = "Purchase"
     else:
         result = "Non-Purchase"
-    
+
     st.divider()
     st.markdown(f"**Prediction:** {result}")
     st.markdown(f"**Purchase Probability:** {probabilities[0]*100:.2f}%")

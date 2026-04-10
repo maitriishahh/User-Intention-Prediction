@@ -3,6 +3,7 @@ import sys
 import pickle
 import joblib
 import numpy as np
+import pandas as pd
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import GridSearchCV
@@ -70,6 +71,9 @@ class ModelTrainer:
 
             logging.info("Data loaded successfully")
 
+            # Save feature names before scaling
+            feature_names = X_train.columns
+
             # Scaling
             scaler = StandardScaler()
 
@@ -136,6 +140,30 @@ class ModelTrainer:
                     best_model_name = model_name
 
             logging.info(f"Best Model Selected: {best_model_name}")
+
+            # Feature Importance (only if available)
+            if hasattr(best_model, "feature_importances_"):
+
+                feature_importance = best_model.feature_importances_
+
+                importance_df = pd.DataFrame({
+                    "Feature": feature_names,
+                    "Importance": feature_importance
+                }).sort_values(by="Importance", ascending=False)
+
+                logging.info("Feature Importance:")
+                logging.info(f"\n{importance_df}")
+
+                importance_path = os.path.join(
+                    "artifacts",
+                    "feature_importance.csv"
+                )
+
+                importance_df.to_csv(importance_path, index=False)
+
+                logging.info(f"Feature importance saved at {importance_path}")
+
+            # Save model
 
             trained_model_dir = self.model_trainer_config.trained_model_dir
 
