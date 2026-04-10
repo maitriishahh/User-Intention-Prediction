@@ -7,10 +7,10 @@ data_ingestion_config:
   ingested_dir: ingested_data
   raw_data_dir: raw_data
 
-# data_validation_config:
-#   clean_data_dir: clean_data
-#   serialized_objects_dir: serialized_objects
-#   data_csv_file: online_shoppers_intention.csv
+data_validation_config:
+  clean_data_dir: clean_data
+  serialized_objects_dir: serialized_objects
+  data_csv_file: online_shoppers_intention.csv
 
 # data_transformation_config:
 #   transformed_data_dir: transformed_data

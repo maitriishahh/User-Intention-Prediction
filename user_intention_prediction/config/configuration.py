@@ -3,10 +3,10 @@ import sys
 from user_intention_prediction.logger.log import logging
 from user_intention_prediction.utils.util import read_yaml_file
 from user_intention_prediction.exception.exception_handler import AppException
-from user_intention_prediction.entity.config_entity import DataIngestionConfig
+from user_intention_prediction.entity.config_entity import DataIngestionConfig, DataValidationConfig
 from user_intention_prediction.constant import *
 
-# DataValidationConfig, DataTransformationConfig, ModelTrainerConfig
+# , DataTransformationConfig, ModelTrainerConfig
 class AppConfiguration:
     def __init__(self, config_file_path: str = CONFIG_FILE_PATH):
         try:
@@ -35,43 +35,43 @@ class AppConfiguration:
         except Exception as e:
             raise AppException(e,sys)from e
         
-    # def get_data_validation_config(self) -> DataValidationConfig:
-    #     try:
-    #         data_validation_config = self.configs_info['data_validation_config']
-    #         data_ingestion_config = self.configs_info['data_ingestion_config']
-    #         dataset_dir = data_ingestion_config['dataset_dir']
-    #         artifacts_dir = self.configs_info['artifacts_config']['artifacts_dir']
-    #         data_csv_file = data_validation_config['data_csv_file']
+    def get_data_validation_config(self) -> DataValidationConfig:
+        try:
+            data_validation_config = self.configs_info['data_validation_config']
+            data_ingestion_config = self.configs_info['data_ingestion_config']
+            dataset_dir = data_ingestion_config['dataset_dir']
+            artifacts_dir = self.configs_info['artifacts_config']['artifacts_dir']
+            data_csv_file = data_validation_config['data_csv_file']
 
-    #         data_csv_file_dir = os.path.join(
-    #             artifacts_dir,
-    #             dataset_dir,
-    #             data_ingestion_config['ingested_dir'],
-    #             data_csv_file
-    #         )
+            data_csv_file_dir = os.path.join(
+                artifacts_dir,
+                dataset_dir,
+                data_ingestion_config['ingested_dir'],
+                data_csv_file
+            )
 
-    #         clean_data_path = os.path.join(
-    #             artifacts_dir,
-    #             dataset_dir,
-    #             data_validation_config['clean_data_dir']
-    #         )
+            clean_data_path = os.path.join(
+                artifacts_dir,
+                dataset_dir,
+                data_validation_config['clean_data_dir']
+            )
 
-    #         serialized_objects_dir = os.path.join(
-    #             artifacts_dir,
-    #             data_validation_config['serialized_objects_dir']
-    #         )
+            serialized_objects_dir = os.path.join(
+                artifacts_dir,
+                data_validation_config['serialized_objects_dir']
+            )
 
-    #         response = DataValidationConfig(
-    #             clean_data_dir = clean_data_path,
-    #             data_csv_file = data_csv_file_dir,
-    #             serialized_objects_dir = serialized_objects_dir
-    #         )
+            response = DataValidationConfig(
+                clean_data_dir = clean_data_path,
+                data_csv_file = data_csv_file_dir,
+                serialized_objects_dir = serialized_objects_dir
+            )
 
-    #         logging.info(f"Data Validation Config: {response}")
-    #         return response
+            logging.info(f"Data Validation Config: {response}")
+            return response
 
-    #     except Exception as e:
-    #         raise AppException(e, sys) from e
+        except Exception as e:
+            raise AppException(e, sys) from e
         
     # def get_data_transformation_config(self) -> DataTransformationConfig:
     #     try:
