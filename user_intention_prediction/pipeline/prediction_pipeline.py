@@ -2,7 +2,7 @@ import os
 import sys
 import joblib
 import pickle
-import pandas as pd
+import numpy as np
 
 from user_intention_prediction.logger.log import logging
 from user_intention_prediction.exception.exception_handler import AppException
@@ -47,12 +47,12 @@ class PredictionPipeline:
 
     def load_test_data(self):
         try:
-            logging.info("Loading test data")
+            logging.info("Loading transformed test data")
 
             with open(self.transformed_data_path, "rb") as file:
                 X_train, X_test, y_train, y_test = pickle.load(file)
 
-            logging.info(f"Test data loaded successfully with shape {X_test.shape}")
+            logging.info(f"Test data shape: {X_test.shape}")
 
             return X_test.head(5)
 
@@ -64,9 +64,13 @@ class PredictionPipeline:
         try:
             logging.info("Making predictions")
 
-            prediction = model.predict(data.values)
+            # Using probability threshold (better for imbalance)
+            probabilities = model.predict_proba(data.values)[:, 1]
 
-            logging.info("Prediction completed")
+            prediction = (probabilities > 0.2)
+
+            logging.info(f"Prediction probabilities: {probabilities}")
+            logging.info(f"Predictions: {prediction}")
 
             return prediction
 

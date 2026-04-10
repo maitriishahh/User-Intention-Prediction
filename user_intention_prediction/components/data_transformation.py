@@ -37,6 +37,9 @@ class DataTransformation:
 
             logging.info("Categorical encoding completed")
 
+            # Convert target variable to int
+            df["Revenue"] = df["Revenue"].astype(int)
+
             # Target variable
             X = df.drop("Revenue", axis=1)
             y = df["Revenue"]
