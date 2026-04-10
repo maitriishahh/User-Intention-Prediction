@@ -64,7 +64,7 @@ class PredictionPipeline:
         try:
             logging.info("Making predictions")
 
-            prediction = model.predict(data)
+            prediction = model.predict(data.values)
 
             logging.info("Prediction completed")
 
