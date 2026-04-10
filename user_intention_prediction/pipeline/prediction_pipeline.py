@@ -3,6 +3,7 @@ import sys
 import joblib
 import pickle
 import numpy as np
+import pandas as pd
 
 from user_intention_prediction.logger.log import logging
 from user_intention_prediction.exception.exception_handler import AppException
@@ -54,7 +55,7 @@ class PredictionPipeline:
 
             logging.info(f"Test data shape: {X_test.shape}")
 
-            return X_test.head(5)
+            return X_test.sample(5)
 
         except Exception as e:
             raise AppException(e, sys)
@@ -67,10 +68,25 @@ class PredictionPipeline:
             # Using probability threshold (better for imbalance)
             probabilities = model.predict_proba(data.values)[:, 1]
 
-            prediction = (probabilities > 0.2)
+            threshold = 0.2
+            prediction = (probabilities > threshold).astype(int)
+
+            labels = ["No Purchase" if p == 0 else "Purchase" for p in prediction]
 
             logging.info(f"Prediction probabilities: {probabilities}")
             logging.info(f"Predictions: {prediction}")
+            logging.info(f"Prediction labels: {labels}")
+
+            output = pd.DataFrame({
+            "Probability": probabilities,
+            "Prediction": prediction,
+            "Label": labels
+            })
+
+            output_path = os.path.join("artifacts", "predictions.csv")
+            output.to_csv(output_path, index=False)
+
+            logging.info(f"Predictions saved at {output_path}")
 
             return prediction
 
