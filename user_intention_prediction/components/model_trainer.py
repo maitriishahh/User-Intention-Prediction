@@ -80,8 +80,12 @@ class ModelTrainer:
             X_train = scaler.fit_transform(X_train)
             X_test = scaler.transform(X_test)
 
-            logging.info("Feature scaling completed")
+            scaler_path = os.path.join('artifacts','scaler.pkl')
+            joblib.dump(scaler,scaler_path)
 
+            logging.info("Feature scaling completed")
+            logging.info(f'Saved scaler at {scaler_path}')
+            
             # Hyperparameters
 
             logistic_params = {

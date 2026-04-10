@@ -21,12 +21,17 @@ class PredictionPipeline:
                 "model.pkl"
             )
 
-            self.transformed_data_path = os.path.join(
+            self.scaler_path = os.path.join(
                 "artifacts",
-                "dataset",
-                "transformed_data",
-                "transformed_data.pkl"
+                "scaler.pkl"
             )
+
+            self.transformed_data_path = os.path.join(
+            "artifacts",
+            "dataset",
+            "transformed_data",
+            "transformed_data.pkl"
+        )
 
         except Exception as e:
             raise AppException(e, sys)
@@ -77,7 +82,7 @@ class PredictionPipeline:
 
         user_df = user_df.reindex(columns=feature_columns, fill_value=0)
         user_df = user_df.astype(float)
-        
+
         logging.info(f"Prepared input:\n{user_df}")
 
         return user_df
@@ -87,14 +92,27 @@ class PredictionPipeline:
         try:
             logging.info("Making predictions")
 
-            # Only transform if input is dictionary (UI input)
+            # Prepare UI input
             if isinstance(data, dict):
                 data = self.prepare_input(data)
 
-            probabilities = model.predict_proba(data.values)[:, 1]
+            # Load scaler
+            scaler = joblib.load(self.scaler_path)
+            logging.info("Scaler loaded successfully")
+
+            # Convert to numpy if dataframe
+            if isinstance(data, pd.DataFrame):
+                data = data.values
+
+            # Apply scaling
+            data = scaler.transform(data)
+
+            # Predict probabilities
+            probabilities = model.predict_proba(data)[:, 1]
 
             threshold = 0.22
             logging.info(f"Using Threshold: {threshold}")
+
             prediction = (probabilities >= threshold).astype(int)
 
             labels = ["No Purchase" if p == 0 else "Purchase" for p in prediction]
