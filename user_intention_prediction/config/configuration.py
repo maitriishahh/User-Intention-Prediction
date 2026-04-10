@@ -3,10 +3,9 @@ import sys
 from user_intention_prediction.logger.log import logging
 from user_intention_prediction.utils.util import read_yaml_file
 from user_intention_prediction.exception.exception_handler import AppException
-from user_intention_prediction.entity.config_entity import DataIngestionConfig, DataValidationConfig, DataTransformationConfig
+from user_intention_prediction.entity.config_entity import DataIngestionConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig
 from user_intention_prediction.constant import *
 
-# , ModelTrainerConfig
 class AppConfiguration:
     def __init__(self, config_file_path: str = CONFIG_FILE_PATH):
         try:
@@ -105,36 +104,36 @@ class AppConfiguration:
         except Exception as e:
             raise AppException(e, sys) from e
         
-    # def get_model_trainer_config(self) -> ModelTrainerConfig:
-    #     try:
-    #         model_trainer_config = self.configs_info['model_trainer_config']
-    #         data_transformation_config = self.configs_info['data_transformation_config']
-    #         data_ingestion_config = self.configs_info['data_ingestion_config']
-    #         dataset_dir = data_ingestion_config['dataset_dir']
-    #         artifacts_dir = self.configs_info['artifacts_config']['artifacts_dir']
+    def get_model_trainer_config(self) -> ModelTrainerConfig:
+        try:
+            model_trainer_config = self.configs_info['model_trainer_config']
+            data_transformation_config = self.configs_info['data_transformation_config']
+            data_ingestion_config = self.configs_info['data_ingestion_config']
+            dataset_dir = data_ingestion_config['dataset_dir']
+            artifacts_dir = self.configs_info['artifacts_config']['artifacts_dir']
             
-    #         transformed_data_file_dir = os.path.join(
-    #             artifacts_dir,
-    #             dataset_dir,
-    #             data_transformation_config['transformed_data_dir'],
-    #             'transformed_data.pkl'
-    #         )
+            transformed_data_file_dir = os.path.join(
+                artifacts_dir,
+                dataset_dir,
+                data_transformation_config['transformed_data_dir'],
+                'transformed_data.pkl'
+            )
 
-    #         trained_model_dir = os.path.join(
-    #             artifacts_dir,
-    #             model_trainer_config['trained_model_dir']
-    #         )
+            trained_model_dir = os.path.join(
+                artifacts_dir,
+                model_trainer_config['trained_model_dir']
+            )
 
-    #         trained_model_name = model_trainer_config['trained_model_name']
+            trained_model_name = model_trainer_config['trained_model_name']
 
-    #         response = ModelTrainerConfig(
-    #             transformed_data_file_dir = transformed_data_file_dir,
-    #             trained_model_dir = trained_model_dir,
-    #             trained_model_name = trained_model_name
-    #         )
+            response = ModelTrainerConfig(
+                transformed_data_file_dir = transformed_data_file_dir,
+                trained_model_dir = trained_model_dir,
+                trained_model_name = trained_model_name
+            )
 
-    #         logging.info(f"Model Trainer Config: {response}")
-    #         return response
+            logging.info(f"Model Trainer Config: {response}")
+            return response
 
-    #     except Exception as e:
-    #         raise AppException(e, sys) from e
+        except Exception as e:
+            raise AppException(e, sys) from e
