@@ -1,6 +1,7 @@
 import os
 import sys
 import joblib
+import pickle
 import pandas as pd
 
 from user_intention_prediction.logger.log import logging
@@ -12,11 +13,18 @@ class PredictionPipeline:
     def __init__(self):
         try:
             logging.info(f"{'='*20}Prediction Pipeline Started{'='*20}")
-            
+
             self.model_path = os.path.join(
                 "artifacts",
                 "trained_model",
                 "model.pkl"
+            )
+
+            self.transformed_data_path = os.path.join(
+                "artifacts",
+                "dataset",
+                "transformed_data",
+                "transformed_data.pkl"
             )
 
         except Exception as e:
@@ -37,24 +45,23 @@ class PredictionPipeline:
             raise AppException(e, sys)
 
 
-    def load_data(self, data_path):
+    def load_test_data(self):
         try:
-            logging.info(f"Loading data from {data_path}")
+            logging.info("Loading test data")
 
-            data = pd.read_csv(data_path)
+            with open(self.transformed_data_path, "rb") as file:
+                X_train, X_test, y_train, y_test = pickle.load(file)
 
-            logging.info(f"Data loaded successfully with shape {data.shape}")
+            logging.info(f"Test data loaded successfully with shape {X_test.shape}")
 
-            return data
+            return X_test.head(5)
 
         except Exception as e:
             raise AppException(e, sys)
 
 
-    def predict(self, data):
+    def predict(self, model, data):
         try:
-            model = self.load_model()
-
             logging.info("Making predictions")
 
             prediction = model.predict(data)
@@ -67,11 +74,13 @@ class PredictionPipeline:
             raise AppException(e, sys)
 
 
-    def initiate_prediction(self, data_path):
+    def start_prediction_pipeline(self):
         try:
-            data = self.load_data(data_path)
+            model = self.load_model()
 
-            prediction = self.predict(data)
+            test_data = self.load_test_data()
+
+            prediction = self.predict(model, test_data)
 
             logging.info(f"{'='*20}Prediction Pipeline Completed{'='*20}")
 

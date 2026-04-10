@@ -7,12 +7,12 @@ if __name__ == "__main__":
     
     logging.info("Starting Training Pipeline")
     
-    training = TrainingPipeline()
-    training.start_training_pipeline()
+    obj = TrainingPipeline()
+    obj.start_training_pipeline()
 
     logging.info("Starting Prediction Pipeline")
 
-    prediction = PredictionPipeline()
-    result = prediction.initiate_prediction("sample.csv")
+    pred = PredictionPipeline()
+    result = pred.start_prediction_pipeline()
 
     print("Prediction:", result)
