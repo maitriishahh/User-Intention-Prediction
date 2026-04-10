@@ -59,16 +59,38 @@ class PredictionPipeline:
 
         except Exception as e:
             raise AppException(e, sys)
+        
+    def prepare_input(self, user_input):
+        feature_columns_path = os.path.join(
+            "artifacts",
+            "dataset",
+            "transformed_data",
+            "feature_columns.pkl"
+        )
+
+        with open(feature_columns_path, "rb") as f:
+            feature_columns = pickle.load(f)
+
+        user_df = pd.DataFrame([user_input])
+
+        user_df = pd.get_dummies(user_df)
+
+        user_df = user_df.reindex(columns=feature_columns, fill_value=0)
+
+        return user_df
 
 
     def predict(self, model, data):
         try:
             logging.info("Making predictions")
 
-            # Using probability threshold (better for imbalance)
+            # Only transform if input is dictionary (UI input)
+            if isinstance(data, dict):
+                data = self.prepare_input(data)
+
             probabilities = model.predict_proba(data.values)[:, 1]
 
-            threshold = 0.2
+            threshold = 0.15
             prediction = (probabilities > threshold).astype(int)
 
             labels = ["No Purchase" if p == 0 else "Purchase" for p in prediction]
@@ -78,9 +100,9 @@ class PredictionPipeline:
             logging.info(f"Prediction labels: {labels}")
 
             output = pd.DataFrame({
-            "Probability": probabilities,
-            "Prediction": prediction,
-            "Label": labels
+                "Probability": probabilities,
+                "Prediction": prediction,
+                "Label": labels
             })
 
             output_path = os.path.join("artifacts", "predictions.csv")
