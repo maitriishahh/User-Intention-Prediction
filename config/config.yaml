@@ -12,8 +12,8 @@ data_validation_config:
   serialized_objects_dir: serialized_objects
   data_csv_file: online_shoppers_intention.csv
 
-# data_transformation_config:
-#   transformed_data_dir: transformed_data
+data_transformation_config:
+  transformed_data_dir: transformed_data
 
 # model_trainer_config:
 #   trained_model_dir: trained_model
