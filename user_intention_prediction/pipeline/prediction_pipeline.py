@@ -90,8 +90,9 @@ class PredictionPipeline:
 
             probabilities = model.predict_proba(data.values)[:, 1]
 
-            threshold = 0.15
-            prediction = (probabilities > threshold).astype(int)
+            threshold = 0.22
+            logging.info(f"Using Threshold: {threshold}")
+            prediction = (probabilities >= threshold).astype(int)
 
             labels = ["No Purchase" if p == 0 else "Purchase" for p in prediction]
 
@@ -110,7 +111,7 @@ class PredictionPipeline:
 
             logging.info(f"Predictions saved at {output_path}")
 
-            return prediction
+            return prediction, probabilities
 
         except Exception as e:
             raise AppException(e, sys)
