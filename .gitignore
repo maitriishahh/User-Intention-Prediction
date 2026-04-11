@@ -12,9 +12,6 @@ env/
 # Logs
 logs/
 
-# Artifacts
-artifacts/
-
 # Models
 models/
 
