@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import requests
 
-API_URL = "http://127.0.0.1:8000/predict"
+API_URL = "https://user-intention-api.onrender.com/predict"
 
 # Page Config
 st.set_page_config(
@@ -113,10 +113,11 @@ if st.button("Predict Purchase"):
     }
 
     try:
-        response = requests.post(API_URL, json=user_input)
-        response.raise_for_status()
+        with st.spinner('Predicting Purchase...'):
+            response = requests.post(API_URL, json=user_input)
+            response.raise_for_status()
 
-        result = response.json()
+            result = response.json()
 
         prediction = result["prediction"]
         probability = result["probability"]
@@ -128,7 +129,6 @@ if st.button("Predict Purchase"):
         else:
             result_text = "Non-Purchase"
 
-        st.divider()
         st.markdown(f"**Prediction:** {result_text}")
         st.markdown(f"**Purchase Probability:** {probability*100:.2f}%")
 
