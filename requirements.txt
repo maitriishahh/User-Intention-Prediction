@@ -9,3 +9,4 @@ streamlit
 uvicorn
 fastapi
 pydantic
+gunicorn

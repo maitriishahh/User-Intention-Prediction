@@ -1,18 +1,54 @@
-from user_intention_prediction.pipeline.training_pipeline import TrainingPipeline
+from fastapi import FastAPI
+from pydantic import BaseModel
+import uvicorn
+import os
+
 from user_intention_prediction.pipeline.prediction_pipeline import PredictionPipeline
-from user_intention_prediction.logger.log import logging
+
+# Initialize app
+app = FastAPI(
+    title="User Purchase Prediction API",
+    description="Predict user purchase intention",
+    version="1.0"
+)
+
+# Initialize pipeline
+pipeline = PredictionPipeline()
+model = pipeline.load_model()
+
+
+# Request Schema
+class UserInput(BaseModel):
+
+    Administrative: float
+    Informational: float
+    ProductRelated: float
+    BounceRates: float
+    ExitRates: float
+    PageValues: float
+    Month: str
+    VisitorType: str
+    Weekend: int
+
+
+@app.get("/")
+def home():
+    return {"message": "User Intention Prediction API Running"}
+
+
+@app.post("/predict")
+def predict(data: UserInput):
+
+    user_input = data.dict()
+
+    prediction, probability = pipeline.predict(model, user_input)
+
+    return {
+        "prediction": int(prediction[0]),
+        "probability": float(probability[0])
+    }
 
 
 if __name__ == "__main__":
-    
-    logging.info("Starting Training Pipeline")
-    
-    obj = TrainingPipeline()
-    obj.start_training_pipeline()
-
-    logging.info("Starting Prediction Pipeline")
-
-    pred = PredictionPipeline()
-    result = pred.start_prediction_pipeline()
-
-    print("Prediction:", result)
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
