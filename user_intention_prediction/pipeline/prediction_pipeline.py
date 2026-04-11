@@ -14,24 +14,29 @@ class PredictionPipeline:
     def __init__(self):
         try:
             logging.info(f"{'='*20}Prediction Pipeline Started{'='*20}")
-
+            
+            base_dir = os.getcwd()
+            
             self.model_path = os.path.join(
+                base_dir,
                 "artifacts",
                 "trained_model",
                 "model.pkl"
             )
 
             self.scaler_path = os.path.join(
+                base_dir,
                 "artifacts",
                 "scaler.pkl"
             )
 
             self.transformed_data_path = os.path.join(
-            "artifacts",
-            "dataset",
-            "transformed_data",
-            "transformed_data.pkl"
-        )
+                base_dir,
+                "artifacts",
+                "dataset",
+                "transformed_data",
+                "transformed_data.pkl"
+            )
 
         except Exception as e:
             raise AppException(e, sys)
